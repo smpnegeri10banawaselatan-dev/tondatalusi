@@ -1,1 +1,38 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Ujian</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded shadow max-w-sm w-full">
+    <h2 class="text-2xl font-bold mb-4 text-center">Login Ujian</h2>
+    <input id="username" type="text" placeholder="Username" class="w-full mb-3 px-3 py-2 border rounded"/>
+    <input id="password" type="password" placeholder="Password" class="w-full mb-3 px-3 py-2 border rounded"/>
+    <button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded">Login</button>
+    <p id="login-error" class="text-red-600 text-sm mt-2 hidden">Username atau password salah.</p>
+  </div>
+
+  <script>
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("https://script.google.com/macros/s/AKfycbx5ZTzb0rBlyCDkDUuXmpZ2f6HeRv2fvyzTSKmSDBXRd5OUysyR67jgqqPxw7HCuXmZ/exec?mode=user");
+      const users = await res.json();
+
+      const user = users.find(u => u.username === username && u.password === password);
+      if (user) {
+        localStorage.setItem("nama", user.nama);
+        window.location.href = "index.html";
+      } else {
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
+
