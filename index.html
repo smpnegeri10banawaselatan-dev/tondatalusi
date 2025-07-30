@@ -21,13 +21,13 @@
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
-      const res = await fetch("https://script.google.com/macros/s/AKfycbx5ZTzb0rBlyCDkDUuXmpZ2f6HeRv2fvyzTSKmSDBXRd5OUysyR67jgqqPxw7HCuXmZ/exec?mode=user");
+      const res = await fetch("https://script.google.com/macros/s/AKfycbx7b7W6n1NPduPW-HaASHg9fltH60PcBIdelJVp2LjH1Mgymgu7KNnOrFaEZJyV6vli/exec");
       const users = await res.json();
 
       const user = users.find(u => u.username === username && u.password === password);
       if (user) {
         localStorage.setItem("nama", user.nama);
-        window.location.href = "index.html";
+        window.location.href = "dashboard.html";
       } else {
         document.getElementById("login-error").classList.remove("hidden");
       }
@@ -35,4 +35,3 @@
   </script>
 </body>
 </html>
-
