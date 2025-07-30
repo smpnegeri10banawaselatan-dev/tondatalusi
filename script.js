@@ -1,5 +1,5 @@
 
-const SERVER_URL = "https://script.google.com/macros/s/YOUR_DEPLOYED_URL_HERE/exec"; // Ganti saat deploy
+const SERVER_URL = "https://script.google.com/macros/s/AKfycbx7b7W6n1NPduPW-HaASHg9fltH60PcBIdelJVp2LjH1Mgymgu7KNnOrFaEZJyV6vli/exec"; // Ganti saat deploy
 
 let soal = [
   {
