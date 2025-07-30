@@ -1,148 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Soal Interaktif</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans p-4">
-
-  <!-- Login Form -->
-  <div id="login-section" class="max-w-md mx-auto bg-white p-6 shadow-md rounded-lg">
-    <h2 class="text-xl font-bold mb-4">Login Sebelum Ujian</h2>
-    <input id="nama" type="text" placeholder="Nama Anda" class="w-full p-2 border rounded mb-4" />
-    <button onclick="mulaiUjian()" class="bg-green-600 text-white px-4 py-2 rounded w-full">Mulai Ujian</button>
+<body class="bg-gray-100 p-4 font-sans">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-xl font-bold mb-4">Soal Interaktif Informatika</h1>
+    <div id="timer" class="text-right text-red-600 font-bold mb-2">Sisa waktu: <span id="waktu">--:--</span></div>
+    <form id="quizForm" class="space-y-4">
+      <!-- Soal akan dimasukkan di sini -->
+    </form>
+    <button id="submitBtn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Kirim Jawaban</button>
+    <button onclick="window.print()" class="mt-2 ml-2 px-4 py-2 bg-green-500 text-white rounded">Cetak Hasil</button>
+    <div id="result" class="mt-4"></div>
   </div>
-
-  <!-- Soal Ujian -->
-  <div id="ujian-section" class="hidden max-w-4xl mx-auto grid grid-cols-4 gap-4">
-    <!-- Kiri: Soal -->
-    <div class="col-span-3 bg-white shadow-lg rounded-lg p-6">
-      <div class="flex justify-between mb-2">
-        <h1 class="text-lg font-bold">Soal Interaktif</h1>
-        <div id="timer" class="text-red-600 font-semibold"></div>
-      </div>
-      <div id="soal-container" class="mb-4"></div>
-      <div class="flex justify-between">
-        <button onclick="sebelumnya()" class="bg-gray-500 text-white px-4 py-2 rounded">Sebelumnya</button>
-        <button onclick="berikutnya()" class="bg-blue-600 text-white px-4 py-2 rounded">Berikutnya</button>
-      </div>
-      <div class="mt-6">
-        <button onclick="submitJawaban()" class="bg-green-600 text-white px-4 py-2 rounded w-full">Selesai & Lihat Skor</button>
-        <div id="hasil" class="mt-4 font-bold text-center"></div>
-      </div>
-    </div>
-
-    <!-- Kanan: Nomor Soal -->
-    <div class="col-span-1 bg-white shadow-md rounded-lg p-4">
-      <h2 class="font-bold mb-2">Nomor Soal</h2>
-      <div id="nomor-soal" class="grid grid-cols-3 gap-2 text-center"></div>
-    </div>
-  </div>
-
-  <script>
-    let soalData = [];
-    let jawabanUser = {};
-    let indeksSaatIni = 0;
-    let waktu = 600; // 10 menit dalam detik
-
-    async function ambilSoal() {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbx5ZTzb0rBlyCDkDUuXmpZ2f6HeRv2fvyzTSKmSDBXRd5OUysyR67jgqqPxw7HCuXmZ/exec");
-      soalData = await response.json();
-      tampilkanNomorSoal();
-      tampilkanSoal(indeksSaatIni);
-      mulaiTimer();
-    }
-
-    function mulaiUjian() {
-      const nama = document.getElementById("nama").value.trim();
-      if (!nama) {
-        alert("Silakan masukkan nama Anda!");
-        return;
-      }
-      document.getElementById("login-section").classList.add("hidden");
-      document.getElementById("ujian-section").classList.remove("hidden");
-      ambilSoal();
-    }
-
-    function tampilkanSoal(index) {
-      const item = soalData[index];
-      const container = document.getElementById("soal-container");
-      container.innerHTML = `
-        <p class="mb-2 font-semibold">No ${index + 1}. ${item.soal}</p>
-        ${item.gambar ? `<img src="${item.gambar}" class="mb-2 w-full max-h-64 object-contain border rounded" />` : ""}
-        ${Object.entries(item.pilihan).map(([key, val]) => `
-          <label class="block mb-1">
-            <input type="radio" name="jawaban" value="${key}" ${jawabanUser[index] === key ? 'checked' : ''} onchange="jawabanUser[${index}]='${key}'" />
-            ${key.toUpperCase()}. ${val}
-          </label>
-        `).join("")}
-      `;
-      updateKotakNomor();
-    }
-
-    function tampilkanNomorSoal() {
-      const nomorContainer = document.getElementById("nomor-soal");
-      nomorContainer.innerHTML = "";
-      soalData.forEach((_, i) => {
-        const btn = document.createElement("button");
-        btn.innerText = i + 1;
-        btn.className = "p-2 border rounded bg-gray-200 hover:bg-blue-300";
-        btn.onclick = () => {
-          indeksSaatIni = i;
-          tampilkanSoal(i);
-        };
-        nomorContainer.appendChild(btn);
-      });
-    }
-
-    function updateKotakNomor() {
-      const btns = document.querySelectorAll("#nomor-soal button");
-      btns.forEach((btn, i) => {
-        btn.className = `p-2 border rounded ${i === indeksSaatIni ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-blue-300'}`;
-      });
-    }
-
-    function berikutnya() {
-      if (indeksSaatIni < soalData.length - 1) {
-        indeksSaatIni++;
-        tampilkanSoal(indeksSaatIni);
-      }
-    }
-
-    function sebelumnya() {
-      if (indeksSaatIni > 0) {
-        indeksSaatIni--;
-        tampilkanSoal(indeksSaatIni);
-      }
-    }
-
-    function submitJawaban() {
-      let benar = 0;
-      soalData.forEach((item, i) => {
-        if (jawabanUser[i] === item.jawaban) benar++;
-      });
-      const skor = (benar / soalData.length) * 100;
-      document.getElementById("hasil").innerText = `Skor Anda: ${skor.toFixed(2)}% (${benar}/${soalData.length})`;
-      clearInterval(timerInterval);
-    }
-
-    // Timer
-    let timerInterval;
-    function mulaiTimer() {
-      timerInterval = setInterval(() => {
-        waktu--;
-        const menit = Math.floor(waktu / 60);
-        const detik = waktu % 60;
-        document.getElementById("timer").innerText = `Sisa Waktu: ${menit}:${detik.toString().padStart(2, "0")}`;
-        if (waktu <= 0) {
-          clearInterval(timerInterval);
-          submitJawaban();
-          alert("Waktu habis! Jawaban telah dikumpulkan.");
-        }
-      }, 1000);
-    }
-  </script>
+<script src="script.js"></script>
 </body>
 </html>
